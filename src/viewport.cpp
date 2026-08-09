@@ -62,20 +62,44 @@ void Viewport::DrawContextMenu(AppState& state) {
     if (ImGui::MenuItem(ICON_FA_COMPACT_DISC " Bone Map"))
       ;
 
-    if (ImGui::BeginMenu("Zoom")) {
-      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_PLUS " Zoom In"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_MINUS " Zoom Out"))
-        ;
+    if (ImGui::BeginMenu("Viewport")) {
+      if (ImGui::MenuItem("Center")) {
+        camera.target = {0, 0};
+      }
+
       ImGui::Separator();
-      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS " Reset Zoom"))
-        ;
+
+      if (ImGui::BeginMenu(ICON_FA_MAGNIFYING_GLASS " Zoom")) {
+        Vector2 origin = {(float)GetScreenWidth() / 2,
+                          (float)GetScreenHeight() / 2};
+        Vector2 beforeZoom = GetScreenToWorld2D(origin, camera);
+
+        if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_PLUS " Zoom In")) {
+          float scale = 0.5;
+          camera.zoom =
+              std::max(0.15f, std::min(4.0f, camera.zoom + scale * 0.1f));
+        }
+
+        if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_MINUS " Zoom Out")) {
+          float scale = -0.5;
+          camera.zoom =
+              std::max(0.15f, std::min(4.0f, camera.zoom + scale * 0.1f));
+          Vector2 afterZoom = GetScreenToWorld2D(origin, camera);
+        }
+        ImGui::Separator();
+
+        if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS " Reset Zoom")) {
+          camera.zoom = 0.5;
+        }
+
+        ImGui::EndMenu();
+      }
 
       ImGui::EndMenu();
     }
 
     ImGui::Separator();
-    if (ImGui::MenuItem(ICON_FA_COMPACT_DISC " Preferences"))
+    if (ImGui::MenuItem(ICON_FA_GEARS " Preferences"))
       ;
 
     ImGui::EndPopup();
