@@ -8,6 +8,74 @@ void Viewport::Draw(AppState& state) {
   DrawBones(state);
 }
 
+void Viewport::DrawContextMenu(AppState& state) {
+  ImGuiIO& io = ImGui::GetIO();
+  if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !io.WantCaptureMouse) {
+    ImGui::OpenPopup("ViewportContext");
+  }
+
+  if (ImGui::BeginPopup("ViewportContext")) {
+    if (ImGui::BeginMenu(ICON_FA_CIRCLE_PLUS " Add")) {
+      if (ImGui::MenuItem(ICON_FA_BONE " Bone"))
+        ;
+      if (ImGui::MenuItem(ICON_FA_IMAGE " Texture"))
+        ;
+      ImGui::EndMenu();
+    }
+    ImGui::Separator();
+
+    if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK " Save"))
+      ;
+
+    if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK " Save As"))
+      ;
+
+    if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK " Save All"))
+      ;
+
+    ImGui::Separator();
+    if (ImGui::MenuItem(ICON_FA_XMARK " Close file"))
+      ;
+
+    ImGui::Separator();
+    if (ImGui::BeginMenu(ICON_FA_TOOLBOX " Tools")) {
+      if (ImGui::MenuItem(ICON_FA_ARROWS_ROTATE " Move"))
+        ;
+      if (ImGui::MenuItem(ICON_FA_ARROW_LEFT " Rotate"))
+        ;
+      if (ImGui::MenuItem(ICON_FA_EXPAND " Scale"))
+        ;
+
+      ImGui::Separator();
+      if (ImGui::MenuItem(ICON_FA_PERSON_RUNNING " IK"))
+        ;
+      ImGui::EndMenu();
+    }
+
+    ImGui::Separator();
+    if (ImGui::MenuItem(ICON_FA_COMPACT_DISC " Bone Map"))
+      ;
+
+    if (ImGui::BeginMenu("Zoom")) {
+      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_PLUS " Zoom In"))
+        ;
+      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS_MINUS " Zoom Out"))
+        ;
+      ImGui::Separator();
+      if (ImGui::MenuItem(ICON_FA_MAGNIFYING_GLASS " Reset Zoom"))
+        ;
+
+      ImGui::EndMenu();
+    }
+
+    ImGui::Separator();
+    if (ImGui::MenuItem(ICON_FA_COMPACT_DISC " Preferences"))
+      ;
+
+    ImGui::EndPopup();
+  }
+}
+
 void Viewport::DrawGrid(AppState& state) {
   Camera2D& camera = state.GetCamera();
   Vector2 topLeft = GetScreenToWorld2D({0, 0}, camera);
