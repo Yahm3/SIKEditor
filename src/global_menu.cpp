@@ -122,7 +122,8 @@ void GlobalMenu::EditMenu(AppState& state) {
           std::string id = "xxbone#menu" + std::to_string(i) + bone->Name();
           ImGui::PushID(id.c_str());
 
-          std::string menu_text = std::string(ICON_FA_BONE) + bone->Name();
+          std::string menu_text =
+              std::string(ICON_FA_BONE) + " " + bone->Name();
           if (ImGui::MenuItem(menu_text.c_str())) {
             delete_index = i;
           }
@@ -162,26 +163,18 @@ void GlobalMenu::EditMenu(AppState& state) {
 void GlobalMenu::ToolsMenu(AppState& state) {
   if (ImGui::BeginMenu("Tools")) {
     if (ImGui::BeginMenu("Pallete")) {
-      if (ImGui::MenuItem(ICON_FA_LOCATION_ARROW " Select"))
-        ;
+      Mode& mode = state.GetMode();
+      for (int m = 0; m < static_cast<int>(Mode::COUNT); m++) {
+        Mode current_mode = (Mode)m;
+        std::string id = std::string(ModeIcon(current_mode)) + " " +
+                         std::string(ModeName(current_mode));
 
-      ImGui::Separator();
-      if (ImGui::MenuItem(ICON_FA_ARROWS_ROTATE " Move"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_ARROW_LEFT " Rotate"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_EXPAND " Scale"))
-        ;
-
-      ImGui::Separator();
-      if (ImGui::MenuItem(ICON_FA_CIRCLE_PLUS " Create"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_TRASH_CAN " Delete"))
-        ;
-
-      ImGui::Separator();
-      if (ImGui::MenuItem(ICON_FA_PERSON_RUNNING " IK"))
-        ;
+        if (ImGui::MenuItem(id.c_str())) {
+          mode = (Mode)m;
+          state.GetDrag() = false;
+          state.CreateDrag() = false;
+        }
+      }
 
       ImGui::EndMenu();
     }
