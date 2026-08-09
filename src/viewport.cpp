@@ -15,6 +15,9 @@ void Viewport::DrawContextMenu(AppState& state) {
   }
 
   if (ImGui::BeginPopup("ViewportContext")) {
+    Vector2 mouseScreen = GetMousePosition();
+    Camera2D& camera = state.GetCamera();
+
     if (ImGui::BeginMenu(ICON_FA_CIRCLE_PLUS " Add")) {
       if (ImGui::MenuItem(ICON_FA_BONE " Bone"))
         ;
@@ -39,16 +42,19 @@ void Viewport::DrawContextMenu(AppState& state) {
 
     ImGui::Separator();
     if (ImGui::BeginMenu(ICON_FA_TOOLBOX " Tools")) {
-      if (ImGui::MenuItem(ICON_FA_ARROWS_ROTATE " Move"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_ARROW_LEFT " Rotate"))
-        ;
-      if (ImGui::MenuItem(ICON_FA_EXPAND " Scale"))
-        ;
+      Mode& mode = state.GetMode();
+      for (int m = 0; m < static_cast<int>(Mode::COUNT); m++) {
+        Mode current_mode = (Mode)m;
+        std::string id = std::string(ModeIcon(current_mode)) + " " +
+                         std::string(ModeName(current_mode));
 
-      ImGui::Separator();
-      if (ImGui::MenuItem(ICON_FA_PERSON_RUNNING " IK"))
-        ;
+        if (ImGui::MenuItem(id.c_str())) {
+          mode = (Mode)m;
+          state.GetDrag() = false;
+          state.CreateDrag() = false;
+        }
+      }
+
       ImGui::EndMenu();
     }
 
