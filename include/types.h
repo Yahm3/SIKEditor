@@ -47,11 +47,13 @@ inline const char* ModeIcon(Mode m) {
     case Mode::RESIZE:
       return ICON_FA_UP_RIGHT_AND_DOWN_LEFT_FROM_CENTER;
     case Mode::CREATE:
-      return ICON_FA_PLUS;
+      return ICON_FA_CIRCLE_PLUS;
     case Mode::DELETE:
       return ICON_FA_TRASH;
     case Mode::IK:
       return ICON_FA_BONE;
+    case Mode::COUNT:
+      return ICON_FA_X;
   }
 
   return ICON_FA_QUESTION;
