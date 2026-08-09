@@ -1,4 +1,8 @@
+#include <bone.h>
 #include <global_menu.h>
+#include <sprite.h>
+
+#include <iostream>
 
 namespace SIK {
 GlobalMenu::GlobalMenu() {}
@@ -104,21 +108,51 @@ void GlobalMenu::EditMenu(AppState& state) {
     ImGui::Separator();
 
     if (ImGui::BeginMenu("Delete")) {
-      if (ImGui::MenuItem("Selected Bone"))
+      if (ImGui::MenuItem(ICON_FA_BONE " Selected Bone"))
         ;
-      if (ImGui::MenuItem("Selected Texture"))
+      if (ImGui::MenuItem(ICON_FA_IMAGE " Selected Texture"))
         ;
 
-      if (ImGui::MenuItem("All Bones"))
-        ;
-      if (ImGui::MenuItem("All Textures"))
+      if (ImGui::BeginMenu("Bones")) {
+        std::vector<std::unique_ptr<Bone>>& bones = state.GetBones();
+
+        int delete_index = -1;
+        for (size_t i = 0; i < bones.size(); ++i) {
+          std::unique_ptr<Bone>& bone = bones[i];
+          std::string id = "xxbone#menu" + std::to_string(i) + bone->Name();
+          ImGui::PushID(id.c_str());
+
+          std::string menu_text = std::string(ICON_FA_BONE) + bone->Name();
+          if (ImGui::MenuItem(menu_text.c_str())) {
+            delete_index = i;
+          }
+          ImGui::PopID();
+        }
+
+        if (delete_index > -1) {
+          std::cout << "Delete: " << delete_index << std::endl;
+          Bone::DeleteBone(state, delete_index);
+        }
+
+        ImGui::Separator();
+        if (ImGui::MenuItem("Delete all bones")) {
+          while (bones.size() > 0) {
+            int last_index = bones.size() - 1;
+            Bone::DeleteBone(state, last_index);
+          }
+        }
+
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::MenuItem(ICON_FA_IMAGES " All Textures"))
         ;
 
       ImGui::EndMenu();
     }
 
     ImGui::Separator();
-    if (ImGui::MenuItem("Preferences"))
+    if (ImGui::MenuItem(ICON_FA_GEARS " Preferences"))
       ;
 
     ImGui::EndMenu();
@@ -128,28 +162,32 @@ void GlobalMenu::EditMenu(AppState& state) {
 void GlobalMenu::ToolsMenu(AppState& state) {
   if (ImGui::BeginMenu("Tools")) {
     if (ImGui::BeginMenu("Pallete")) {
-      if (ImGui::MenuItem("Select"))
-        ;
-      if (ImGui::MenuItem("Move"))
-        ;
-      if (ImGui::MenuItem("Rotate"))
-        ;
-      if (ImGui::MenuItem("Scale"))
+      if (ImGui::MenuItem(ICON_FA_LOCATION_ARROW " Select"))
         ;
 
       ImGui::Separator();
-      if (ImGui::MenuItem("Create"))
+      if (ImGui::MenuItem(ICON_FA_ARROWS_ROTATE " Move"))
         ;
-      if (ImGui::MenuItem("Delete"))
+      if (ImGui::MenuItem(ICON_FA_ARROW_LEFT " Rotate"))
         ;
-      if (ImGui::MenuItem("IK"))
+      if (ImGui::MenuItem(ICON_FA_EXPAND " Scale"))
+        ;
+
+      ImGui::Separator();
+      if (ImGui::MenuItem(ICON_FA_CIRCLE_PLUS " Create"))
+        ;
+      if (ImGui::MenuItem(ICON_FA_TRASH_CAN " Delete"))
+        ;
+
+      ImGui::Separator();
+      if (ImGui::MenuItem(ICON_FA_PERSON_RUNNING " IK"))
         ;
 
       ImGui::EndMenu();
     }
 
     ImGui::Separator();
-    if (ImGui::MenuItem("Bone Map"))
+    if (ImGui::MenuItem(ICON_FA_COMPACT_DISC " Bone Map"))
       ;
     ImGui::EndMenu();
   }
@@ -157,15 +195,15 @@ void GlobalMenu::ToolsMenu(AppState& state) {
 
 void GlobalMenu::HelpMenu(AppState&) {
   if (ImGui::BeginMenu("Help")) {
-    if (ImGui::MenuItem("Tutorials"))
+    if (ImGui::MenuItem(ICON_FA_BOOK " Tutorials"))
       ;
-    if (ImGui::MenuItem("Documentation"))
-      ;
-    ImGui::Separator();
-    if (ImGui::MenuItem("Github Repository"))
+    if (ImGui::MenuItem(ICON_FA_BOOK_BIBLE " Documentation"))
       ;
     ImGui::Separator();
-    if (ImGui::MenuItem("About"))
+    if (ImGui::MenuItem(ICON_FA_GLOBE " Github Repository"))
+      ;
+    ImGui::Separator();
+    if (ImGui::MenuItem(ICON_FA_INFO " About"))
       ;
 
     ImGui::EndMenu();
