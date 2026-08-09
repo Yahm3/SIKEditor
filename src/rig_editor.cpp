@@ -136,14 +136,14 @@ int RigEditor::Run() {
 
   Camera2D& camera = state.GetCamera();
 
-  camera.zoom = 1.0f;
+  camera.zoom = 0.5f;
   camera.offset = {screenW / 2.0f, screenH / 2.0f + 40};
   camera.target = {0, 0};
 
   console.Log("Creating default done");
   Bone::CreateBone(state, {0, 0}, {0, -200}, -1);
 
-  console.Log("Settarting app up fonts");
+  console.Log("Starting up");
   console.Log("App started successfully");
   while (!WindowShouldClose()) {
     BeginDrawing();
@@ -157,13 +157,15 @@ int RigEditor::Run() {
       FilePathList files = LoadDroppedFiles();
       for (unsigned int i = 0; i < files.count; i++) {
         Texture2D tex = LoadTexture(files.paths[i]);
-        if (tex.id != 0) {
+        if (IsTextureValid(tex)) {
           auto s = std::make_unique<Sprite>();
           s->SetTexture(tex);
           s->Name() = "Sprite_" + std::to_string(state.NextSpriteId());
           s->Position() = GetScreenToWorld2D(GetMousePosition(), camera);
           console.Log("Loaded texture: " + s->Name());
           sprites.push_back(std::move(s));
+        } else {
+          UnloadTexture(tex);
         }
       }
       UnloadDroppedFiles(files);
@@ -226,6 +228,10 @@ int RigEditor::Run() {
         case Mode::IK:
           ModeEvent::Ik(state);
           break;
+
+        case Mode::COUNT:
+        default:
+          break;  // Unreachable
       }
 
       if (IsKeyPressed(KEY_ONE)) currentMode = Mode::SELECT;
