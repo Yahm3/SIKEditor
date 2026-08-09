@@ -7,6 +7,7 @@ class Viewport {
   Viewport() {}
   ~Viewport() {}
   void Draw(AppState&);
+  void DrawContextMenu(AppState&);
 
  private:
   void DrawGrid(AppState&);
