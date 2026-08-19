@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
       "external/rlImGui/rlImGui.cpp",
 
       // imnodes
-      "external/imnodes/imNodes.cpp", "external/imnodes/imNodesEz.cpp",
+      "external/imnodes/ImNodes.cpp", "external/imnodes/ImNodesEz.cpp",
 
       // impie
       "external/impie/impie.cpp");
@@ -84,8 +84,13 @@ int main(int argc, char** argv) {
   char raylib_lib[1024];
   snprintf(raylib_lib, sizeof(raylib_lib), "-L%s/lib/", raylib_home);
 
+#if defined(_WIN32) || defined(_WIN64)
   nob_cmd_append(&cmd, "-o", OUTPUT, raylib_include, raylib_lib, "-lraylib",
-                 "-lopengl32", "-lgdi32", "-lwinmm", "-lshell32");
+      "-lopengl32", "-lgdi32", "-lwinmm", "-lshell32");
+#elif (__linux__)
+  nob_cmd_append(&cmd, "-o", OUTPUT, raylib_include, raylib_lib, "-lraylib",
+      "-lm", "-lGL", "-lpthread", "-ldl", "-lrt", "-lX11");
+#endif
 
   if (!nob_cmd_run_sync(cmd)) return 1;
 
